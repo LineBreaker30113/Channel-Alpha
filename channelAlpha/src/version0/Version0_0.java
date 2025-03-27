@@ -357,7 +357,7 @@ public class Version0_0 implements KeyListener, MouseListener, MouseMotionListen
 				frame.repaint();
 			}
 		};
-		updatingTimer.scheduleAtFixedRate(updater, 0, 112);
+		updatingTimer.scheduleAtFixedRate(updater, 0, 12);
 		
 	}
 
