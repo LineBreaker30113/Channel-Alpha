@@ -87,24 +87,12 @@ public class Version0_0 implements KeyListener, MouseListener, MouseMotionListen
 		
 		public static void updateCanvas() {
 			float moveSpeed = 5.0f; // Hareket hızını artırmak için bu değeri ekledim
-			if (Status.DAdown) {
-				verticalC -= moveSpeed / zoomVertical;
-			}
-			if (Status.UAdown) {
-				verticalC += moveSpeed / zoomVertical;
-			}
-			if (Status.RAdown) {
-				horrizontalC -= moveSpeed / zoomHorrizontal;
-			}
-			if (Status.LAdown) {
-				horrizontalC += moveSpeed / zoomHorrizontal;
-			}
-			if (!Status.mouseONcanvas) {
-				return;
-			}
-			if (!(Status.mouse1down || Status.mouse3down)) {
-				return;
-			}
+			if (Status.DAdown) { verticalC -= moveSpeed / zoomVertical; }
+			if (Status.UAdown) { verticalC += moveSpeed / zoomVertical; }
+			if (Status.RAdown) { horrizontalC -= moveSpeed / zoomHorrizontal; }
+			if (Status.LAdown) { horrizontalC += moveSpeed / zoomHorrizontal; }
+			if (!Status.mouseONcanvas) { return; }
+			if (!(Status.mouse1down || Status.mouse3down)) { return; }
 			int mhp = 0, mvp = 0;
 			{
 				Point mp = MouseInfo.getPointerInfo().getLocation();
@@ -430,6 +418,7 @@ public class Version0_0 implements KeyListener, MouseListener, MouseMotionListen
 			}
 		});
 		frame.add(resizeButton);
+		
 		{
 			Graphics2D cg = (Graphics2D) Canvas.image.getGraphics();
 			cg.setBackground(Color.white);
@@ -443,7 +432,7 @@ public class Version0_0 implements KeyListener, MouseListener, MouseMotionListen
 				frame.repaint();
 			}
 		};
-		updatingTimer.scheduleAtFixedRate(updater, 0, 112);
+		updatingTimer.scheduleAtFixedRate(updater, 0, 12);
 		
 	}
 
