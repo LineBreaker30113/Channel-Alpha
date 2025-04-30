@@ -30,9 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
-import Version0_0.Canvas;
-import Version0_0.Status;
-
 public class Version0_0 implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	
 	public static JFrame frame;
