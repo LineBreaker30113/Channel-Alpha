@@ -2,7 +2,7 @@ package channelAlpha;
 
 import java.util.TimerTask;
 
-import channelAlpha.adaptor.Canvas;
+import channelAlpha.view.Canvas;
 import channelAlpha.view.Window;
 
 public class Main {
@@ -22,7 +22,7 @@ public class Main {
 		updater = new TimerTask() {
 			@Override
 			public void run() {
-				canvas.im.updateCanvas();
+				canvas.updateCanvas();
 				window.repaint();
 			}
 		};

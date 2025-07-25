@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import channelAlpha.adaptor.Canvas;
+import channelAlpha.adaptor.ImagePane;
 
 public class Window extends JFrame {
 
@@ -39,30 +39,31 @@ public class Window extends JFrame {
 	public Window(Canvas canvas, String title) throws HeadlessException {
 		super(title);
 		this.canvas = canvas;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(800, 700);
-		setLocationRelativeTo(null);
-		setLayout(null);
-		getContentPane().setBackground(Color.black);
-		setVisible(true);
+		super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		super.setSize(800, 700);
+		super.setLocationRelativeTo(null);
+		super.setLayout(null);
+		super.getContentPane().setBackground(Color.black);
+		super.setVisible(true);
+		super.addKeyListener(canvas.kbt);
 		
 		canvas.init();
 
 		chooseColor1 = new JButton(); chooseColor3 = new JButton();
 		chooseColor1.setFocusable(false); chooseColor3.setFocusable(false);
 		chooseColor1.setBounds(30, 230, 70, 70); chooseColor3.setBounds(100, 230, 70, 70);
-		chooseColor1.setBackground(canvas.im.m1color); chooseColor3.setBackground(canvas.im.m3color);
+		chooseColor1.setBackground(canvas.ip.m1color); chooseColor3.setBackground(canvas.ip.m3color);
 		chooseColor1.addActionListener(event -> {
-			Color candidate = JColorChooser.showDialog(this, "Choose Primary Color", canvas.im.m1color);
+			Color candidate = JColorChooser.showDialog(this, "Choose Primary Color", canvas.ip.m1color);
 			if(candidate == null) { return; }
-			canvas.im.m1color = candidate;
-			chooseColor1.setBackground(canvas.im.m1color);
+			canvas.ip.m1color = candidate;
+			chooseColor1.setBackground(canvas.ip.m1color);
 		});
 		chooseColor3.addActionListener(event -> {
-			 Color candidate = JColorChooser.showDialog(this, "Choose Secondary Color", canvas.im.m3color);
+			 Color candidate = JColorChooser.showDialog(this, "Choose Secondary Color", canvas.ip.m3color);
 			 if(candidate == null) { return; }
-			 canvas.im.m3color = candidate;
-			chooseColor3.setBackground(canvas.im.m3color);
+			 canvas.ip.m3color = candidate;
+			chooseColor3.setBackground(canvas.ip.m3color);
 		});
 		this.add(chooseColor1); this.add(chooseColor3);
 
@@ -87,7 +88,7 @@ public class Window extends JFrame {
 		saveButton.addActionListener(event -> {
 			if(saveDialog.showDialog(this, "save") == JFileChooser.APPROVE_OPTION) {
 				try {
-					ImageIO.write(canvas.im.image, "png", saveDialog.getSelectedFile());
+					ImageIO.write(canvas.ip.im.image, "png", saveDialog.getSelectedFile());
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(this, "Image failed to be saved!");
 					e.printStackTrace();
@@ -104,8 +105,8 @@ public class Window extends JFrame {
 		loadButton.addActionListener(event -> {
 			if(loadDialog.showDialog(this, "load") == JFileChooser.APPROVE_OPTION) {
 				try {
-					canvas.im.image = ImageIO.read(loadDialog.getSelectedFile());
-					canvas.im.rasterOFimage = canvas.im.image.getRaster();
+					canvas.ip.im.image = ImageIO.read(loadDialog.getSelectedFile());
+					canvas.ip.im.rasterOFimage = canvas.ip.im.image.getRaster();
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(this, "Image failed to be loaded!");
 					e.printStackTrace();
@@ -153,25 +154,25 @@ public class Window extends JFrame {
 					g.clearRect(0, 0, newWidth, newHeight);
 
 					// Eski resmi merkezden yeni resme çizme
-					int x = (newWidth - canvas.im.image.getWidth()) / 2;
-					int y = (newHeight - canvas.im.image.getHeight()) / 2;
+					int x = (newWidth - canvas.ip.im.image.getWidth()) / 2;
+					int y = (newHeight - canvas.ip.im.image.getHeight()) / 2;
 					if (x < 0)
 						x = 0;
 					if (y < 0)
 						y = 0;
 
-					g.drawImage(canvas.im.image, x, y, null);
+					g.drawImage(canvas.ip.im.image, x, y, null);
 					g.dispose();
 
 					// Yeni resmi atama
-					canvas.im.image = newImage;
-					canvas.im.rasterOFimage = canvas.im.image.getRaster();
+					canvas.ip.im.image = newImage;
+					canvas.ip.im.rasterOFimage = canvas.ip.im.image.getRaster();
 
 					// Zoom ve center değerlerini sıfırlama
-					canvas.im.zoomHorrizontal = 1.0f;
-					canvas.im.zoomVertical = 1.0f;
-					canvas.im.horrizontalC = 0;
-					canvas.im.verticalC = 0;
+					canvas.ip.zoomHorrizontal = 1.0f;
+					canvas.ip.zoomVertical = 1.0f;
+					canvas.ip.horrizontalC = 0;
+					canvas.ip.verticalC = 0;
 
 					JOptionPane.showMessageDialog(this, "Image resized successfully!", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -185,9 +186,9 @@ public class Window extends JFrame {
 		super.add(resizeButton);
 		
 		{
-			Graphics2D cg = (Graphics2D) canvas.im.image.getGraphics();
+			Graphics2D cg = (Graphics2D) canvas.ip.im.image.getGraphics();
 			cg.setBackground(Color.white);
-			cg.clearRect(0, 0, canvas.im.image.getWidth(), canvas.im.image.getHeight());
+			cg.clearRect(0, 0, canvas.ip.im.image.getWidth(), canvas.ip.im.image.getHeight());
 		}
 	}
 
