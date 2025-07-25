@@ -13,9 +13,12 @@ import javax.swing.JPanel;
 
 import channelAlpha.adaptor.ImagePane;
 import channelAlpha.lang.Point2i;
-import channelAlpha.model.Constants;
 
 public class Canvas extends JPanel implements MouseMotionListener, MouseWheelListener {
+	
+	
+	
+	public final float ZOOM_MULTIPLIER = 17.f/16.f;
 	
 	
 	public MouseUpdateTracker mut;
@@ -94,11 +97,11 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 			ip.brush3size = ip.brush3size < 0.f ? -0.1f : ip.brush3size;
 		} else {
 			if(e.getWheelRotation() < 0) {
-				ip.zoomHorrizontal *= Constants.zoomer;
-				ip.zoomVertical *= Constants.zoomer;
+				ip.zoomHorrizontal *= ZOOM_MULTIPLIER;
+				ip.zoomVertical *= ZOOM_MULTIPLIER;
 			} else {
-				ip.zoomHorrizontal /= Constants.zoomer;
-				ip.zoomVertical /= Constants.zoomer;
+				ip.zoomHorrizontal /= ZOOM_MULTIPLIER;
+				ip.zoomVertical /= ZOOM_MULTIPLIER;
 			}
 		}
 	}
