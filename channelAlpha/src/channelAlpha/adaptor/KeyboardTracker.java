@@ -1,4 +1,4 @@
-package channelAlpha.view;
+package channelAlpha.adaptor;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

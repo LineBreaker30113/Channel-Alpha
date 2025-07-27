@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import channelAlpha.adaptor.ImagePane;
+import channelAlpha.adaptor.KeyboardTracker;
+import channelAlpha.adaptor.MouseUpdateTracker;
 import channelAlpha.lang.Point2i;
 
 public class Canvas extends JPanel implements MouseMotionListener, MouseWheelListener {
