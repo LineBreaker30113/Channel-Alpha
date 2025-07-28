@@ -79,11 +79,11 @@ public class ImagePane {
 	}
 	public int getDisplayXbyImageX(int horrizontalP) {
 		return (int) ((horrizontalP * zoomHorrizontal) -
-				(im.rasterOFimage.getWidth()/2.f*(zoomHorrizontal-1.f)));
+				(im.raster.getWidth()/2.f*(zoomHorrizontal-1.f)));
 	}
 	public int getDisplayYbyImageY(int verticalP) {
 		return (int) ((verticalP * zoomVertical) -
-				(im.rasterOFimage.getHeight()/2.f*(zoomVertical-1.f)));
+				(im.raster.getHeight()/2.f*(zoomVertical-1.f)));
 	}
 
 	public void updatePane() {
@@ -106,9 +106,10 @@ public class ImagePane {
 		if (canvas.mut.left && canvas.mut.right) {
 
 		} else if (canvas.mut.left) {
-			drawSquare(mhp, mvp, m1color, brush1size);
+//			System.out.println(mhp + "|" + mvp);
+//			drawSquare(mhp, mvp, m1color, brush1size);
 		} else if (canvas.mut.right) {
-			drawSquare(mhp, mvp, m3color, brush3size);
+//			drawSquare(mhp, mvp, m3color, brush3size);
 		}
 	}
 	
@@ -131,6 +132,7 @@ public class ImagePane {
 				buttonIndex == 1 ? m1color : m3color, buttonIndex == 1 ? brush1size : brush3size);
 		brushLock.unlock();
 	}
+	
 	
 
 	public ImagePane(Canvas canvas) {

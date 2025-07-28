@@ -16,8 +16,7 @@ public class Main {
 		canvas = new Canvas();
 		window = new Window(canvas, "Channel ALPHA v0.0 (test build)");
 		window.addKeyListener(canvas.kbt);
-		canvas.setSize(600, 600);
-		canvas.setLocation(180, 50);
+		canvas.setBounds(180, 50, 600, 600);
 		window.add(canvas);
 		updater = new TimerTask() {
 			@Override
@@ -26,7 +25,7 @@ public class Main {
 				window.repaint();
 			}
 		};
-		updatingTimer.scheduleAtFixedRate(updater, 0, 112);
+		updatingTimer.scheduleAtFixedRate(updater, 0, 52);
 		
 	}
 	

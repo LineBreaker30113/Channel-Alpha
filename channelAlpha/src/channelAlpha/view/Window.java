@@ -106,7 +106,7 @@ public class Window extends JFrame {
 			if(loadDialog.showDialog(this, "load") == JFileChooser.APPROVE_OPTION) {
 				try {
 					canvas.ip.im.image = ImageIO.read(loadDialog.getSelectedFile());
-					canvas.ip.im.rasterOFimage = canvas.ip.im.image.getRaster();
+					canvas.ip.im.raster = canvas.ip.im.image.getRaster();
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(this, "Image failed to be loaded!");
 					e.printStackTrace();
@@ -147,32 +147,7 @@ public class Window extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-
-					BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_3BYTE_BGR);
-					Graphics2D g = newImage.createGraphics();
-					g.setBackground(Color.white);
-					g.clearRect(0, 0, newWidth, newHeight);
-
-					// Eski resmi merkezden yeni resme çizme
-					int x = (newWidth - canvas.ip.im.image.getWidth()) / 2;
-					int y = (newHeight - canvas.ip.im.image.getHeight()) / 2;
-					if (x < 0)
-						x = 0;
-					if (y < 0)
-						y = 0;
-
-					g.drawImage(canvas.ip.im.image, x, y, null);
-					g.dispose();
-
-					// Yeni resmi atama
-					canvas.ip.im.image = newImage;
-					canvas.ip.im.rasterOFimage = canvas.ip.im.image.getRaster();
-
-					// Zoom ve center değerlerini sıfırlama
-					canvas.ip.zoomHorrizontal = 1.0f;
-					canvas.ip.zoomVertical = 1.0f;
-					canvas.ip.horrizontalC = 0;
-					canvas.ip.verticalC = 0;
+					canvas.resize(newWidth, newHeight);
 
 					JOptionPane.showMessageDialog(this, "Image resized successfully!", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -184,12 +159,6 @@ public class Window extends JFrame {
 			}
 		});
 		super.add(resizeButton);
-		
-		{
-			Graphics2D cg = (Graphics2D) canvas.ip.im.image.getGraphics();
-			cg.setBackground(Color.white);
-			cg.clearRect(0, 0, canvas.ip.im.image.getWidth(), canvas.ip.im.image.getHeight());
-		}
 	}
 
 //	public Window(String title, GraphicsConfiguration gc) {

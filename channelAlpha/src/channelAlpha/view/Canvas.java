@@ -1,5 +1,6 @@
 package channelAlpha.view;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -35,7 +36,7 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 
 	
 	public void paintImageToPanel(Graphics2D brush) {
-		int iw = ip.im.image.getWidth(), ih = ip.im.image.getHeight();
+		int iw = ip.im.getWidth(), ih = ip.im.getHeight();
 		int dhp = ip.getDisplayXbyImageX((int)ip.horrizontalC);
 		int dvp = ip.getDisplayYbyImageY((int)ip.verticalC);
 		int dw = (int)(iw * ip.zoomHorrizontal), dh = (int)(ih * ip.zoomVertical);
@@ -43,6 +44,34 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 		brush.drawImage(ip.im.image, dhp, dvp, dhp+dw, dvp+dh, 0, 0, ip.im.image.getWidth(), ip.im.image.getHeight(), this);
 	}
 	
+
+	public void resize(int newWidth, int newHeight) {
+
+		BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_3BYTE_BGR);
+		Graphics2D g = newImage.createGraphics();
+		g.setBackground(Color.white);
+		g.clearRect(0, 0, newWidth, newHeight);
+
+		int x = (newWidth - ip.im.getWidth()) / 2;
+		int y = (newHeight - ip.im.getHeight()) / 2;
+		if (x < 0)
+			x = 0;
+		if (y < 0)
+			y = 0;
+
+		g.drawImage(ip.im.image, x, y, null);
+		g.dispose();
+
+		ip.im.free();
+		ip.im.image = newImage;
+		ip.im.init();
+
+		// Zoom ve center değerlerini sıfırlama
+//		ip.zoomHorrizontal = 1.0f;
+//		ip.zoomVertical = 1.0f;
+//		ip.horrizontalC = 0;
+//		ip.verticalC = 0;
+	}
 	
 
 	public Canvas() {
@@ -54,6 +83,7 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 		super.addMouseWheelListener(mut);
 		super.addMouseWheelListener(this);
 	}
+	
 	
 	public void init() {
 		ip.im.image = new BufferedImage(600, 600, BufferedImage.TYPE_3BYTE_BGR);
