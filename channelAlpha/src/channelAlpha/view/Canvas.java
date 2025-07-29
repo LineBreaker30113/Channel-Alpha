@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+import channelAlpha.Util;
 import channelAlpha.adaptor.ImagePane;
 import channelAlpha.adaptor.KeyboardTracker;
 import channelAlpha.adaptor.MouseUpdateTracker;
@@ -37,9 +38,9 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 	
 	public void paintImageToPanel(Graphics2D brush) {
 		int iw = ip.im.getWidth(), ih = ip.im.getHeight();
-		int dhp = ip.getDisplayXbyImageX((int)ip.horrizontalC);
-		int dvp = ip.getDisplayYbyImageY((int)ip.verticalC);
-		int dw = (int)(iw * ip.zoomHorrizontal), dh = (int)(ih * ip.zoomVertical);
+		int dhp = (int) ip.getDisplayXbyImageX((int)ip.imageY);
+		int dvp = (int) ip.getDisplayYbyImageY((int)ip.imageX);
+		int dw = (int)(iw * ip.zoomX), dh = (int)(ih * ip.zoomY);
 		brush.clearRect(0, 0, getWidth(), getHeight());
 		brush.drawImage(ip.im.image, dhp, dvp, dhp+dw, dvp+dh, 0, 0, ip.im.image.getWidth(), ip.im.image.getHeight(), this);
 	}
@@ -94,6 +95,13 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 	public void paintComponent(Graphics graphics) {
 		Graphics2D g = (Graphics2D) graphics;
 		paintImageToPanel(g);
+		Point2i displayLocation = mut.getRelativePosition();
+		g.setColor(Color.RED);
+		g.fillRect(0, displayLocation.y, getWidth(), 1);
+		g.fillRect(displayLocation.x, 0, 1, getHeight());
+		g.setColor(Color.GREEN);
+		g.fillRect(0, (int) ip.getDisplayYbyImageY(ip.getImageYbyDisplayY(displayLocation.y)), getWidth(), 1);
+		g.fillRect((int) ip.getDisplayXbyImageX(ip.getImageXbyDisplayX(displayLocation.x)), 0, 1, getHeight());
 	}
 
 
@@ -128,13 +136,26 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 			ip.brush3size -= e.getWheelRotation()/2.f;
 			ip.brush3size = ip.brush3size < 0.f ? -0.1f : ip.brush3size;
 		} else {
+//			double formerXrepresentative = (e.getPoint().x - getWidth()/2.f) / ip.zoomHorrizontal;
+//			double formerYrepresentative = (e.getPoint().y - getHeight()/2.f) / ip.zoomHorrizontal;
+//			double formerXrepresentative = ip.getImageXbyDisplayX(e.getPoint().x);
+//			double formerYrepresentative = ip.getImageYbyDisplayY(e.getPoint().y);
+//			Util.delog("FormerZoomData: R:"+ip.zoomVertical+" Px:"+e.getPoint().x+" Rx:"+formerXrepresentative+" Cx:"+ip.horrizontalCenter);
 			if(e.getWheelRotation() < 0) {
-				ip.zoomHorrizontal *= ZOOM_MULTIPLIER;
-				ip.zoomVertical *= ZOOM_MULTIPLIER;
+				ip.zoomX *= ZOOM_MULTIPLIER;
+				ip.zoomY *= ZOOM_MULTIPLIER;
 			} else {
-				ip.zoomHorrizontal /= ZOOM_MULTIPLIER;
-				ip.zoomVertical /= ZOOM_MULTIPLIER;
+				ip.zoomX /= ZOOM_MULTIPLIER;
+				ip.zoomY /= ZOOM_MULTIPLIER;
 			}
+//			double newXrepresentative = (e.getPoint().x - getWidth()/2.f) / ip.zoomHorrizontal;
+//			double newYrepresentative = (e.getPoint().y - getHeight()/2.f) / ip.zoomHorrizontal;
+//			double newXrepresentative = ip.getImageXbyDisplayX(e.getPoint().x);
+//			double newYrepresentative = ip.getImageYbyDisplayY(e.getPoint().y);
+//			ip.horrizontalCenter -= formerXrepresentative - newXrepresentative;
+//			ip.verticalCenter -= formerYrepresentative - newYrepresentative;
+//			Util.delog("NewZoomData: R:"+ip.zoomVertical+" NRx:"+newXrepresentative+" ARx:"+
+//			(ip.getImageXbyDisplayX(e.getPoint().x))+" Cx:"+ip.horrizontalCenter+"\n");
 		}
 	}
 
