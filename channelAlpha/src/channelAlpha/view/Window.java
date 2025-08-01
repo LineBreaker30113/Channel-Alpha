@@ -1,9 +1,7 @@
 package channelAlpha.view;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.HeadlessException;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -16,7 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import channelAlpha.adaptor.ImagePane;
 
 public class Window extends JFrame {
 
@@ -147,7 +144,7 @@ public class Window extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					canvas.resize(newWidth, newHeight);
+					canvas.ip.resize(newWidth, newHeight);
 
 					JOptionPane.showMessageDialog(this, "Image resized successfully!", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -165,10 +162,5 @@ public class Window extends JFrame {
 //		super(title, gc);
 //		// TODO Auto-generated constructor stub
 //	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
 
 }
