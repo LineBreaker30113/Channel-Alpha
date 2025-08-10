@@ -168,9 +168,9 @@ public class ImagePane { //  extends channelAlpha.lang.LimitedPane2D
 				((double) canvas.getWidth()) / ((double) width),
 				(((double) canvas.getHeight()) / ((double) height))
 				);
-		zoomMax = (byte) (ZOOM_MAX_INDEX - Math.log(Math.min(
+		zoomMax = (byte) (ZOOM_MAX_INDEX - Math.max(0, Math.log(Math.min(
 				((double) canvas.getWidth()) / ((double) width),
-				((double) canvas.getWidth()) / ((double) width))));
+				((double) canvas.getWidth()) / ((double) width)))));
 	}
 
 //	@Override public double getViewWidth() { return canvas.getWidth(); }
