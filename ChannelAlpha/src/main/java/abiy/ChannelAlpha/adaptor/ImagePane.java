@@ -8,6 +8,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import java.util.concurrent.locks.ReentrantLock;
 
 import abiy.ChannelAlpha.model.ImageModel;
@@ -37,6 +39,62 @@ public class ImagePane { //  extends channelAlpha.lang.LimitedPane2D
 	/** The brush colors for left and right clicks. */
 	public Color m1color = Color.black, m3color = Color.white;
 	
+	/**
+	 * Gets the primary color (left mouse button)
+	 */
+	public Color getPrimaryColor() {
+		return m1color;
+	}
+	
+	/**
+	 * Sets the primary color (left mouse button)
+	 */
+	public void setPrimaryColor(Color color) {
+		this.m1color = color;
+	}
+	
+	/**
+	 * Gets the secondary color (right mouse button)
+	 */
+	public Color getSecondaryColor() {
+		return m3color;
+	}
+	
+	/**
+	 * Sets the secondary color (right mouse button)
+	 */
+	public void setSecondaryColor(Color color) {
+		this.m3color = color;
+	}
+	
+	/**
+	 * Gets the current image
+	 */
+	public BufferedImage getImage() {
+		return im.image;
+	}
+	
+	/**
+	 * Gets the current image dimensions
+	 */
+	public java.awt.Dimension getImageSize() {
+		if (im.image != null) {
+			return new java.awt.Dimension(im.image.getWidth(), im.image.getHeight());
+		}
+		return new java.awt.Dimension(0, 0);
+	}
+	
+	/**
+	 * Loads an image from a file
+	 */
+	public void loadImage(java.io.File file) throws IOException {
+		im.image = ImageIO.read(file);
+		if (im.image != null) {
+			im.raster = im.image.getRaster();
+		} else {
+			throw new IOException("Failed to read image file");
+		}
+	}
 
 	/** Since ImageModel should bee separate from "view" we had to add this function, later we may expand it's functionality. */
 	public void paintImageToPanel(Graphics2D brush) {
@@ -112,38 +170,50 @@ public class ImagePane { //  extends channelAlpha.lang.LimitedPane2D
 	}
 	
 	public boolean isWithin(Point2D.Double point) {
-		return point.x > 0 || point.y > 0 || point.x <= im.getWidth() || point.y <= im.getHeight();
+		return point.x >= 0 && point.y >= 0 && point.x < im.getWidth() && point.y < im.getHeight();
 	}
 	
 	public void drawSquare(Point2D point, int buttonIndex) {
 		float brushSize = buttonIndex == 1 ? brush1size : brush3size;
 		Color color = buttonIndex == 1 ? m1color : m3color;
-		if((brushSize) == -0.1f) { return; }
+		if(brushSize <= 0.1f) { return; }
+		
 		brushLock.lock();
-		im.brush.setColor(color);
-		im.drawSquare(point.getX(), point.getY(), brushSize);
-		brushLock.unlock();
+		try {
+			im.brush.setColor(color);
+			im.drawSquare(point.getX(), point.getY(), brushSize);
+		} finally {
+			brushLock.unlock();
+		}
 	}
 
 	public void drawStroke(Point2D begin, Point2D end, int buttonIndex) {
-		if((buttonIndex == 1 ? brush1size : brush3size) == -0.1f) { return; }
+		float brushSize = buttonIndex == 1 ? brush1size : brush3size;
+		if(brushSize <= 0.1f) { return; }
+		
 		brushLock.lock();
-		im.drawStroke(begin, end, buttonIndex == 1 ? m1color : m3color, buttonIndex == 1 ? brush1size : brush3size);
-		brushLock.unlock();
+		try {
+			im.drawStroke(begin, end, buttonIndex == 1 ? m1color : m3color, brushSize);
+		} finally {
+			brushLock.unlock();
+		}
 	}
 
 	public void resize(int newWidth, int newHeight) {
+		if (newWidth <= 0 || newHeight <= 0) {
+			throw new IllegalArgumentException("Width and height must be positive");
+		}
 		
 		BufferedImage formerImage = im.image;
 		im.free();
 		init(newWidth, newHeight);
 
-		int x = (newWidth - im.getWidth()) / 2;
-		int y = (newHeight - im.getHeight()) / 2;
-		if (x < 0) { x = 0; }
-		if (y < 0) { y = 0; }
-
-		im.brush.drawImage(formerImage, x, y, null);
+		if (formerImage != null) {
+			int x = Math.max(0, (newWidth - formerImage.getWidth()) / 2);
+			int y = Math.max(0, (newHeight - formerImage.getHeight()) / 2);
+			
+			im.brush.drawImage(formerImage, x, y, null);
+		}
 	}
 	
 

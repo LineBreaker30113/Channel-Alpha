@@ -79,6 +79,20 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 		ip.init();
 	}
 	
+	/**
+	 * Gets the ImagePane associated with this canvas
+	 */
+	public ImagePane getImagePane() {
+		return ip;
+	}
+	
+	/**
+	 * Gets the KeyboardTracker associated with this canvas
+	 */
+	public KeyboardTracker getKeyboardTracker() {
+		return kbt;
+	}
+	
 	@Override
 	public void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
@@ -93,32 +107,26 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if(mut.left && mut.right) {
-			
+			// Both buttons pressed - could implement special behavior here
 		} else if(mut.left) {
 			Point mcp = e.getPoint();
-//			ip.drawStroke(mut.leftLastPressPosition.x,
-//					mut.leftLastPressPosition.y,
-//					mcp.x, mcp.y, 1);
 			mut.leftLastPressPosition = new Point(mcp.x, mcp.y);
 		} else if(mut.right) {
 			Point mcp = e.getPoint();
-//			ip.drawStroke(mut.rightLastPressPosition.x,
-//					mut.rightLastPressPosition.y,
-//					mcp.x, mcp.y, 3);
 			mut.rightLastPressPosition = new Point(mcp.x, mcp.y);
 		}
-		
 	}
+	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if(mut.left && mut.right) {
-			
+			// Both buttons pressed - could implement special behavior here
 		} else if(mut.left) {
 			ip.brush1size -= e.getWheelRotation()/2.f;
-			ip.brush1size = ip.brush1size < 0.f ? -0.1f : ip.brush1size;
+			ip.brush1size = ip.brush1size < 0.f ? 0.1f : ip.brush1size;
 		} else if(mut.right) {
 			ip.brush3size -= e.getWheelRotation()/2.f;
-			ip.brush3size = ip.brush3size < 0.f ? -0.1f : ip.brush3size;
+			ip.brush3size = ip.brush3size < 0.f ? 0.1f : ip.brush3size;
 		} else {
 			ip.scale(e.getWheelRotation() < 0, e.getPoint());
 		}
@@ -126,8 +134,8 @@ public class Canvas extends JPanel implements MouseMotionListener, MouseWheelLis
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// Update mouse position for tracking purposes
+		// This method is required by the MouseMotionListener interface
 	}
 
 }
