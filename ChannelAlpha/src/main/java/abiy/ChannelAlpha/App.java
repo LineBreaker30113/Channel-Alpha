@@ -15,25 +15,25 @@ import abiy.ChannelAlpha.view.Window;
  */
 public class App {
     
-    private static final Logger LOGGER = Logger.getLogger(App.class.getName());
-    private static final int UPDATE_INTERVAL_MS = 52; // ~19 FPS
+    private static final Logger LOGGER = Logger.getLogger(App.class.getName()); // Logger for application events
+    private static final int UPDATE_INTERVAL_MS = 52; // ~19 FPS - Timer interval for canvas updates
     
-    private Window window;
-    private Canvas canvas;
-    private Timer updateTimer;
-    private boolean isRunning = false;
+    private Window window; // Main application window
+    private Canvas canvas; // Canvas for drawing and image manipulation
+    private Timer updateTimer; // Timer for regular canvas updates
+    private boolean isRunning = false; // Flag to track application running state
 
     /**
      * Main entry point for the application
      */
     public static void main(String[] args) {
         try {
-            App app = new App();
-            app.start();
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to start application", e);
-            System.err.println("Failed to start application: " + e.getMessage());
-            System.exit(1);
+            App app = new App(); // Create new application instance
+            app.start(); // Start the application
+        } catch (Exception e) { // Catch any startup errors
+            LOGGER.log(Level.SEVERE, "Failed to start application", e); // Log the error
+            System.err.println("Failed to start application: " + e.getMessage()); // Print error to console
+            System.exit(1); // Exit with error code
         }
     }
     
@@ -41,15 +41,15 @@ public class App {
      * Starts the application
      */
     public void start() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> { // Ensure UI creation happens on EDT
             try {
-                initializeUI();
-                startUpdateTimer();
-                isRunning = true;
-                LOGGER.info("Application started successfully");
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "Failed to initialize UI", e);
-                throw new RuntimeException("Failed to initialize UI", e);
+                initializeUI(); // Set up the user interface
+                startUpdateTimer(); // Start the update timer
+                isRunning = true; // Mark application as running
+                LOGGER.info("Application started successfully"); // Log successful startup
+            } catch (Exception e) { // Catch any UI initialization errors
+                LOGGER.log(Level.SEVERE, "Failed to initialize UI", e); // Log the error
+                throw new RuntimeException("Failed to initialize UI", e); // Rethrow as runtime exception
             }
         });
     }
@@ -58,72 +58,72 @@ public class App {
      * Initializes the user interface
      */
     private void initializeUI() {
-        canvas = new Canvas();
-        window = new Window(canvas, "Channel ALPHA v0.0 (test build)");
+        canvas = new Canvas(); // Create new canvas for drawing
+        window = new Window(canvas, "Channel ALPHA v0.0 (test build)"); // Create main window with title
         
         // Set up canvas bounds and add to window
-        canvas.setBounds(180, 50, 600, 600);
-        window.add(canvas);
+        canvas.setBounds(180, 50, 600, 600); // Position and size the canvas within the window
+        window.add(canvas); // Add canvas to the window
         
         // Add key listener to window
-        window.addKeyListener(canvas.getKeyboardTracker());
+        window.addKeyListener(canvas.getKeyboardTracker()); // Connect keyboard input to canvas
     }
     
     /**
      * Starts the update timer for canvas updates
      */
     private void startUpdateTimer() {
-        updateTimer = new Timer("CanvasUpdateTimer", true);
-        updateTimer.scheduleAtFixedRate(new TimerTask() {
+        updateTimer = new Timer("CanvasUpdateTimer", true); // Create daemon timer for canvas updates
+        updateTimer.scheduleAtFixedRate(new TimerTask() { // Schedule recurring task
             @Override
             public void run() {
-                if (isRunning && canvas != null && window != null) {
-                    SwingUtilities.invokeLater(() -> {
+                if (isRunning && canvas != null && window != null) { // Check if application is still running
+                    SwingUtilities.invokeLater(() -> { // Ensure updates happen on EDT
                         try {
-                            canvas.updateCanvas();
-                            window.repaint();
-                        } catch (Exception e) {
-                            LOGGER.log(Level.WARNING, "Error during canvas update", e);
+                            canvas.updateCanvas(); // Update canvas state (mouse, keyboard, drawing)
+                            window.repaint(); // Trigger window repaint
+                        } catch (Exception e) { // Catch any update errors
+                            LOGGER.log(Level.WARNING, "Error during canvas update", e); // Log warning
                         }
                     });
                 }
             }
-        }, 0, UPDATE_INTERVAL_MS);
+        }, 0, UPDATE_INTERVAL_MS); // Start immediately, repeat every 52ms
     }
     
     /**
      * Stops the application
      */
     public void stop() {
-        isRunning = false;
-        if (updateTimer != null) {
-            updateTimer.cancel();
-            updateTimer = null;
+        isRunning = false; // Mark application as stopped
+        if (updateTimer != null) { // Check if timer exists
+            updateTimer.cancel(); // Cancel the update timer
+            updateTimer = null; // Clear timer reference
         }
-        if (window != null) {
-            window.dispose();
+        if (window != null) { // Check if window exists
+            window.dispose(); // Close and dispose the window
         }
-        LOGGER.info("Application stopped");
+        LOGGER.info("Application stopped"); // Log application stop
     }
     
     /**
      * Gets the main window
      */
     public Window getWindow() {
-        return window;
+        return window; // Return the main window
     }
     
     /**
      * Gets the canvas
      */
     public Canvas getCanvas() {
-        return canvas;
+        return canvas; // Return the canvas
     }
     
     /**
      * Checks if the application is running
      */
     public boolean isRunning() {
-        return isRunning;
+        return isRunning; // Return running state
     }
 }

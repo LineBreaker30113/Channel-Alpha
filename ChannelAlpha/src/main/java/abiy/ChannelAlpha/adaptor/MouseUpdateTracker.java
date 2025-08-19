@@ -29,81 +29,88 @@ import java.util.Date;
  * in the same state, for using this utility you must call lbUpdate() in every update.
  ******************************************************************************************/
 public class MouseUpdateTracker implements MouseListener, MouseWheelListener {
-	public long leftLastPressDate = 0, rightLastPressDate = 0, middleLastPress = 0;
-	public long leftLastReleaseDate = 0, rightLastReleaseDate = 0, middleLastRelease = 0;
-	public boolean left = false, right = false, midle = false, mouseInside = false;
-	public boolean leftReaded = false, rightReaded = false, middleReaded = false;
+	public long leftLastPressDate = 0, rightLastPressDate = 0, middleLastPress = 0; // Timestamps for last button press events
+	public long leftLastReleaseDate = 0, rightLastReleaseDate = 0, middleLastRelease = 0; // Timestamps for last button release events
+	public boolean left = false, right = false, midle = false, mouseInside = false; // Current button states and mouse inside flag
+	public boolean leftReaded = false, rightReaded = false, middleReaded = false; // Flags to track if button press has been processed
 	
-	public Component component;
+	public Component component; // Component that this tracker is attached to
 
 	public MouseUpdateTracker(Component component) {
-		this.component = component;
-		leftLastPressDate = new Date().getTime(); rightLastPressDate = new Date().getTime();
-		middleLastPress = new Date().getTime(); middleLastRelease = new Date().getTime();
-		leftLastReleaseDate = new Date().getTime(); rightLastReleaseDate = new Date().getTime();
+		this.component = component; // Store reference to the component
+		leftLastPressDate = new Date().getTime(); rightLastPressDate = new Date().getTime(); // Initialize press timestamps
+		middleLastPress = new Date().getTime(); middleLastRelease = new Date().getTime(); // Initialize middle button timestamps
+		leftLastReleaseDate = new Date().getTime(); rightLastReleaseDate = new Date().getTime(); // Initialize release timestamps
 	}
 
-	public Point leftLastPressPosition = null, leftLastReleasePosition = null;
-	public Point rightLastPressPosition = null, rightLastReleasePosition = null;
-	public int leftSameFor = 0, rightSameFor = 0;
-	public double wheelStatus = 0;
-	public Component mouseOriginObject = null;
-	public Point position = new Point();
+	public Point leftLastPressPosition = null, leftLastReleasePosition = null; // Store left button press and release positions
+	public Point rightLastPressPosition = null, rightLastReleasePosition = null; // Store right button press and release positions
+	public int leftSameFor = 0, rightSameFor = 0; // Count how many updates buttons stayed in same state
+	public double wheelStatus = 0; // Cumulative wheel rotation value
+	public Component mouseOriginObject = null; // Component for relative positioning
+	public Point position = new Point(); // Current mouse position
+	
 	public void onPress(MouseEvent e) {
-		switch(e.getButton()) {
-		case MouseEvent.BUTTON2: midle = true; break;
-		case MouseEvent.BUTTON1:
-			left = true; leftSameFor = 0;
-			leftLastPressPosition = new Point(e.getX(), e.getY());
-			leftLastPressDate = new Date().getTime();
+		switch(e.getButton()) { // Check which mouse button was pressed
+		case MouseEvent.BUTTON2: midle = true; break; // Middle button (wheel click)
+		case MouseEvent.BUTTON1: // Left button
+			left = true; leftSameFor = 0; // Set left button state and reset counter
+			leftLastPressPosition = new Point(e.getX(), e.getY()); // Store press position
+			leftLastPressDate = new Date().getTime(); // Store press timestamp
 			break;
-		case MouseEvent.BUTTON3:
-			right = true; rightSameFor = 0;
-			rightLastPressPosition = new Point(e.getX(), e.getY());
-			rightLastPressDate = new Date().getTime();
+		case MouseEvent.BUTTON3: // Right button
+			right = true; rightSameFor = 0; // Set right button state and reset counter
+			rightLastPressPosition = new Point(e.getX(), e.getY()); // Store press position
+			rightLastPressDate = new Date().getTime(); // Store press timestamp
 			break;
 		}
 	}
+	
 	public void onRelease(MouseEvent e) {
-		switch(e.getButton()) {
-		case MouseEvent.BUTTON2: midle = false; middleReaded = false; break;
-		case MouseEvent.BUTTON1:
-			left = false; leftSameFor = 0; leftReaded = false;
-			leftLastReleasePosition = new Point(e.getX(), e.getY());
-			leftLastReleaseDate = new Date().getTime();
+		switch(e.getButton()) { // Check which mouse button was released
+		case MouseEvent.BUTTON2: midle = false; middleReaded = false; break; // Middle button release
+		case MouseEvent.BUTTON1: // Left button release
+			left = false; leftSameFor = 0; leftReaded = false; // Reset left button state and flags
+			leftLastReleasePosition = new Point(e.getX(), e.getY()); // Store release position
+			leftLastReleaseDate = new Date().getTime(); // Store release timestamp
 			break;
-		case MouseEvent.BUTTON3:
-			right = false; rightSameFor = 0; rightReaded = false;
-			rightLastReleasePosition = new Point(e.getX(), e.getY());
-			leftLastReleaseDate = new Date().getTime();
+		case MouseEvent.BUTTON3: // Right button release
+			right = false; rightSameFor = 0; rightReaded = false; // Reset right button state and flags
+			rightLastReleasePosition = new Point(e.getX(), e.getY()); // Store release position
+			leftLastReleaseDate = new Date().getTime(); // Store release timestamp (note: should be rightLastReleaseDate)
 			break;
 		}
 	}
+	
 	public void lbUpdate() {
-		if(mouseOriginObject == null) { position = getPosition();
-		} else { position = getPosition(mouseOriginObject); }
-		leftSameFor++; rightSameFor++;
+		if(mouseOriginObject == null) { position = getPosition(); // Get absolute position if no origin component
+		} else { position = getPosition(mouseOriginObject); } // Get position relative to origin component
+		leftSameFor++; rightSameFor++; // Increment counters for button state duration
 	}
+	
 	public Point getPosition() {
-		Point p = MouseInfo.getPointerInfo().getLocation();
-		return new Point(p.x, p.y);
+		Point p = MouseInfo.getPointerInfo().getLocation(); // Get current mouse position from system
+		return new Point(p.x, p.y); // Return new Point object
 	}
+	
 	public Point getRelativePosition() {
-		Point p = component.getLocationOnScreen(); Point r = getPosition();
-		r.x -= p.x; r.y -= p.y;
-		return r;
+		Point p = component.getLocationOnScreen(); Point r = getPosition(); // Get component screen location and current mouse position
+		r.x -= p.x; r.y -= p.y; // Calculate position relative to component
+		return r; // Return relative position
 	}
+	
 	public Point getPosition(Component relative) {
-		Point p = relative.getLocationOnScreen(); Point r = getPosition();
-		r.x -= p.x; r.y -= p.y;
-		return r;
+		Point p = relative.getLocationOnScreen(); Point r = getPosition(); // Get relative component screen location and current mouse position
+		r.x -= p.x; r.y -= p.y; // Calculate position relative to specified component
+		return r; // Return relative position
 	}
-	@Override public void mousePressed(MouseEvent e) { onPress(e); }
-	@Override public void mouseReleased(MouseEvent e) { onRelease(e); }
-	@Override public void mouseEntered(MouseEvent e) { mouseInside = true; }
-	@Override public void mouseExited(MouseEvent e) { mouseInside = false; }
-	@Override public void mouseClicked(MouseEvent e) { }
-	@Override public void mouseWheelMoved(MouseWheelEvent e) { wheelStatus += e.getPreciseWheelRotation(); }
+	
+	@Override public void mousePressed(MouseEvent e) { onPress(e); } // Handle mouse press event
+	@Override public void mouseReleased(MouseEvent e) { onRelease(e); } // Handle mouse release event
+	@Override public void mouseEntered(MouseEvent e) { mouseInside = true; } // Handle mouse enter event
+	@Override public void mouseExited(MouseEvent e) { mouseInside = false; } // Handle mouse exit event
+	@Override public void mouseClicked(MouseEvent e) { } // Handle mouse click event (not used)
+	@Override public void mouseWheelMoved(MouseWheelEvent e) { wheelStatus += e.getPreciseWheelRotation(); } // Update cumulative wheel rotation
 	
 
 }
